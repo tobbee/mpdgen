@@ -204,6 +204,7 @@
 			<xs:element name="GroupLabel" type="LabelType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="Preselection" type="PreselectionType" minOccurs="0"
 				maxOccurs="unbounded"/>
+			<xs:element name="ImportedMPD" type="ImportedMPDType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute ref="xlink:href"/>
@@ -241,6 +242,8 @@
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:sequence minOccurs="0">
 				<xs:element name="SelectionInfo" type="SelectionInfoType"/>
+				<xs:element name="AlternativeMPD" type="AlternativeMPDEventType" minOccurs="0"
+					maxOccurs="1"/>
 			</xs:sequence>
 		</xs:sequence>
 		<xs:attribute name="presentationTime" type="xs:unsignedLong" default="0"/>
@@ -273,6 +276,30 @@
 		<xs:attribute name="parameter" type="xs:string" use="required"/>
 		<xs:attribute name="data" type="xs:string"/>
 	</xs:complexType>
+	<xs:simpleType name="AlternativeMPDModeType">
+		<xs:annotation>
+		<xs:documentation xml:lang="en"> Alternative MPD event modes </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+				<xs:enumeration value="insert"/>
+				<xs:enumeration value="replace"/>
+				<xs:enumeration value="replace+listen"/>
+				<xs:enumeration value="return"/>
+		</xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="AlternativeMPDEventType">
+        <xs:annotation>
+	        <xs:documentation xml:lang="en"> Alternative MPD event </xs:documentation>
+        </xs:annotation> 
+        <xs:sequence>
+	        <xs:any namespace="##other" 
+               processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="uri" type="xs:anyURI" use="required"/>
+        <xs:attribute name="mode" type="AlternativeMPDModeType" use="required"/>
+        <xs:attribute name="earliestResolutionTimeOffset" type="xs:double" use="required"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
 	<xs:simpleType name="ContentEncodingType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en">Event Coding</xs:documentation>
@@ -764,6 +791,13 @@
 				<xs:attribute name="order" type="PreselectionOrderType" default="undefined"/>
 			</xs:extension>
 		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ImportedMPDType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en"> Imported MPD for linked Period </xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="uri" type="xs:string" use="required"/>
+		<xs:attribute name="earliestResolutionTimeOffset" type="xs:unsignedInt" default="60"/>
 	</xs:complexType>
 	<xs:simpleType name="AudioSamplingRateType">
 		<xs:annotation>
