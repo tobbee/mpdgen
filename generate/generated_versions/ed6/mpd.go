@@ -55,10 +55,10 @@ type PresentationType string
 
 // PeriodType is Period
 type PeriodType struct {
-	XlinkHref            string                    `xml:"xlink:href,attr,omitempty"`
-	XlinkActuate         string                    `xml:"xlink:actuate,attr,omitempty"`
-	XlinkType            string                    `xml:"xlink:type,attr,omitempty"`
-	XlinkShow            string                    `xml:"xlink:show,attr,omitempty"`
+	XlinkHref            *Href                     `xml:"xlink:href,attr,omitempty"`
+	XlinkActuate         *Actuate                  `xml:"xlink:actuate,attr,omitempty"`
+	XlinkType            *Type                     `xml:"xlink:type,attr,omitempty"`
+	XlinkShow            *Show                     `xml:"xlink:show,attr,omitempty"`
 	Id                   string                    `xml:"id,attr,omitempty"`
 	Start                string                    `xml:"start,attr,omitempty"`
 	Duration             string                    `xml:"duration,attr,omitempty"`
@@ -77,15 +77,14 @@ type PeriodType struct {
 	EmptyAdaptationSet   []*AdaptationSetType      `xml:"EmptyAdaptationSet"`
 	GroupLabel           []*LabelType              `xml:"GroupLabel"`
 	Preselection         []*PreselectionType       `xml:"Preselection"`
-	ImportedMPD          []*ImportedMPDType        `xml:"ImportedMPD"`
 }
 
 // EventStreamType is Event Stream
 type EventStreamType struct {
-	XlinkHref              string       `xml:"xlink:href,attr,omitempty"`
-	XlinkActuate           string       `xml:"xlink:actuate,attr,omitempty"`
-	XlinkType              string       `xml:"xlink:type,attr,omitempty"`
-	XlinkShow              string       `xml:"xlink:show,attr,omitempty"`
+	XlinkHref              *Href        `xml:"xlink:href,attr,omitempty"`
+	XlinkActuate           *Actuate     `xml:"xlink:actuate,attr,omitempty"`
+	XlinkType              *Type        `xml:"xlink:type,attr,omitempty"`
+	XlinkShow              *Show        `xml:"xlink:show,attr,omitempty"`
 	SchemeIdUri            string       `xml:"schemeIdUri,attr"`
 	Value                  string       `xml:"value,attr,omitempty"`
 	Timescale              uint32       `xml:"timescale,attr,omitempty"`
@@ -133,9 +132,9 @@ type ContentEncodingType string
 
 // InitializationSetType is Initialization Set
 type InitializationSetType struct {
-	XlinkHref      string            `xml:"xlink:href,attr,omitempty"`
-	XlinkActuate   string            `xml:"xlink:actuate,attr,omitempty"`
-	XlinkType      string            `xml:"xlink:type,attr,omitempty"`
+	XlinkHref      *Href             `xml:"xlink:href,attr,omitempty"`
+	XlinkActuate   *Actuate          `xml:"xlink:actuate,attr,omitempty"`
+	XlinkType      *Type             `xml:"xlink:type,attr,omitempty"`
 	Id             uint32            `xml:"id,attr"`
 	InAllPeriods   bool              `xml:"inAllPeriods,attr,omitempty"`
 	ContentType    string            `xml:"contentType,attr,omitempty"`
@@ -215,10 +214,10 @@ type ListOfProfilesType string
 
 // AdaptationSetType is Adaptation Set
 type AdaptationSetType struct {
-	XlinkHref               string                  `xml:"xlink:href,attr,omitempty"`
-	XlinkActuate            string                  `xml:"xlink:actuate,attr,omitempty"`
-	XlinkType               string                  `xml:"xlink:type,attr,omitempty"`
-	XlinkShow               string                  `xml:"xlink:show,attr,omitempty"`
+	XlinkHref               *Href                   `xml:"xlink:href,attr,omitempty"`
+	XlinkActuate            *Actuate                `xml:"xlink:actuate,attr,omitempty"`
+	XlinkType               *Type                   `xml:"xlink:type,attr,omitempty"`
+	XlinkShow               *Show                   `xml:"xlink:show,attr,omitempty"`
 	Id                      uint32                  `xml:"id,attr,omitempty"`
 	Group                   uint32                  `xml:"group,attr,omitempty"`
 	Lang                    string                  `xml:"lang,attr,omitempty"`
@@ -416,12 +415,6 @@ type PreselectionType struct {
 	*RepresentationBaseType
 }
 
-// ImportedMPDType is Imported MPD for linked Period
-type ImportedMPDType struct {
-	Uri                          string `xml:"uri,attr"`
-	EarliestResolutionTimeOffset uint32 `xml:"earliestResolutionTimeOffset,attr,omitempty"`
-}
-
 // AudioSamplingRateType is Audio Sampling Rate
 type AudioSamplingRateType *UIntVectorType
 
@@ -514,10 +507,10 @@ type FailoverContentType struct {
 
 // SegmentListType is Segment List
 type SegmentListType struct {
-	XlinkHref    string            `xml:"xlink:href,attr,omitempty"`
-	XlinkActuate string            `xml:"xlink:actuate,attr,omitempty"`
-	XlinkType    string            `xml:"xlink:type,attr,omitempty"`
-	XlinkShow    string            `xml:"xlink:show,attr,omitempty"`
+	XlinkHref    *Href             `xml:"xlink:href,attr,omitempty"`
+	XlinkActuate *Actuate          `xml:"xlink:actuate,attr,omitempty"`
+	XlinkType    *Type             `xml:"xlink:type,attr,omitempty"`
+	XlinkShow    *Show             `xml:"xlink:show,attr,omitempty"`
 	SegmentURL   []*SegmentURLType `xml:"SegmentURL"`
 	*MultipleSegmentBaseType
 }
