@@ -27,5 +27,6 @@ type ExtendedUrlInfoType struct {
 	IncludeInRequests string `xml:"includeInRequests,attr,omitempty"`
 	HeaderParamSource string `xml:"headerParamSource,attr,omitempty"`
 	SameOriginOnly    bool   `xml:"sameOriginOnly,attr,omitempty"`
+	Header            string `xml:"header,attr,omitempty"`
 	*UrlQueryInfoType
 }

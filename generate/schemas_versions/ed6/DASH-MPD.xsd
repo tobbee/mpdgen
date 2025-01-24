@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8"?> 
 <!DOCTYPE schema [
 	<!-- space  -->
 	<!ENTITY space "&#x20;">
@@ -80,6 +79,8 @@
 	<!ENTITY comma_sep ",[&space;&tab;]*">
 ]>
 
+<!-- 6th Ed. 2nd Draft FDIS -->
+
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns="urn:mpeg:dash:schema:mpd:2011" targetNamespace="urn:mpeg:dash:schema:mpd:2011"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
@@ -100,6 +101,7 @@
 			<xs:documentation xml:lang="en"> MPD: main element </xs:documentation>
 		</xs:annotation>
 	</xs:element>
+
 	<xs:complexType name="MPDtype">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> MPD Type </xs:documentation>
@@ -144,8 +146,10 @@
 		<xs:attribute name="suggestedPresentationDelay" type="xs:duration"/>
 		<xs:attribute name="maxSegmentDuration" type="xs:duration"/>
 		<xs:attribute name="maxSubsegmentDuration" type="xs:duration"/>
+
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
+
 	<xs:complexType name="PatchLocationType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Patch Location Type </xs:documentation>
@@ -158,7 +162,7 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	
+
 	<xs:complexType name="LocationType">
 		<xs:simpleContent>
 			<xs:extension base="xs:anyURI">
@@ -167,8 +171,8 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-		
-	
+
+
 	<xs:simpleType name="PresentationType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Presentation Type enumeration </xs:documentation>
@@ -176,6 +180,7 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="static"/>
 			<xs:enumeration value="dynamic"/>
+			<xs:enumeration value="list"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="PeriodType">
@@ -183,6 +188,7 @@
 			<xs:documentation xml:lang="en"> Period </xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element name="ImportedMPD" type="ImportedMpdType" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="BaseURL" type="BaseURLType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="SegmentBase" type="SegmentBaseType" minOccurs="0"/>
 			<xs:element name="SegmentList" type="SegmentListType" minOccurs="0"/>
@@ -204,7 +210,6 @@
 			<xs:element name="GroupLabel" type="LabelType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="Preselection" type="PreselectionType" minOccurs="0"
 				maxOccurs="unbounded"/>
-			<xs:element name="ImportedMPD" type="ImportedMPDType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute ref="xlink:href"/>
@@ -215,14 +220,35 @@
 		<xs:attribute name="start" type="xs:duration"/>
 		<xs:attribute name="duration" type="xs:duration"/>
 		<xs:attribute name="bitstreamSwitching" type="xs:boolean" default="false"/>
+
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
+
+	<xs:complexType name="ImportedMpdType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en"> Imported MPD </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+
+		<xs:attribute name="uri" type="xs:anyURI" use="required"/>
+		<xs:attribute name="earliestResolutionTimeOffset" type="xs:double" default="60"/>
+
+	</xs:complexType>
+
 	<xs:complexType name="EventStreamType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Event Stream </xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="Event" type="EventType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ServiceDescription" type="ServiceDescriptionType" minOccurs="0"
+				maxOccurs="unbounded"/>
+			<xs:element name="EssentialProperty" type="DescriptorType" minOccurs="0"
+				maxOccurs="unbounded"/>
+			<xs:element name="SupplementalProperty" type="DescriptorType" minOccurs="0"
+				maxOccurs="unbounded"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute ref="xlink:href"/>
@@ -234,23 +260,34 @@
 		<xs:attribute name="timescale" type="xs:unsignedInt"/>
 		<xs:attribute name="presentationTimeOffset" type="xs:unsignedLong" default="0"/>
 	</xs:complexType>
+
 	<xs:complexType name="EventType" mixed="true">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Event </xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:sequence minOccurs="0">
-				<xs:element name="SelectionInfo" type="SelectionInfoType"/>
-				<xs:element name="AlternativeMPD" type="AlternativeMPDEventType" minOccurs="0"
+			<xs:choice minOccurs="0" maxOccurs="1">
+				<xs:element name="SelectionInfo" type="SelectionInfoType" minOccurs="0"
 					maxOccurs="1"/>
-			</xs:sequence>
+				<xs:element name="ServiceDescription" type="ServiceDescriptionType" minOccurs="0"
+					maxOccurs="1"/>
+				<xs:element name="InsertPresentation" type="AlternativeMPDEventType" minOccurs="0"
+					maxOccurs="1"/>
+				<xs:element name="ReplacePresentation" type="AlternativeMPDReplaceEventType"
+					minOccurs="0" maxOccurs="1"/>
+			</xs:choice>
+			<xs:element name="SupplementalProperty" type="DescriptorType" minOccurs="0"
+				maxOccurs="unbounded"/>
+			<xs:element name="EssentialProperty" type="DescriptorType" minOccurs="0"
+				maxOccurs="unbounded"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute name="presentationTime" type="xs:unsignedLong" default="0"/>
 		<xs:attribute name="duration" type="xs:unsignedLong"/>
-		<xs:attribute name="id" type="xs:unsignedInt"/>
-		<xs:attribute name="contentEncoding" type="ContentEncodingType"/>
-		<xs:attribute name="messageData" type="xs:string">
+		<xs:attribute name="id" type="xs:unsignedLong"/>
+		<xs:attribute name="status" type="EventStatusType"/>
+		<xs:attribute name="contentEncoding" type="ContentEncodingType" use="prohibited"/>
+		<xs:attribute name="messageData" type="xs:string" use="prohibited">
 			<xs:annotation>
 				<xs:documentation xml:lang="en"> Deprecated in favor of carrying the message
 					information in the value space of the event </xs:documentation>
@@ -258,6 +295,19 @@
 		</xs:attribute>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
+
+	<xs:simpleType name="EventStatusType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en"> Event Status </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="none"/>
+			<xs:enumeration value="update"/>
+			<xs:enumeration value="repeat"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
 	<xs:complexType name="SelectionInfoType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en">SelectionInfo</xs:documentation>
@@ -268,6 +318,7 @@
 		<xs:attribute name="selectionInfo" type="xs:string"/>
 		<xs:attribute name="contactURL" type="xs:anyURI" use="required"/>
 	</xs:complexType>
+	
 	<xs:complexType name="SelectionType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en">Selection</xs:documentation>
@@ -276,30 +327,6 @@
 		<xs:attribute name="parameter" type="xs:string" use="required"/>
 		<xs:attribute name="data" type="xs:string"/>
 	</xs:complexType>
-	<xs:simpleType name="AlternativeMPDModeType">
-		<xs:annotation>
-		<xs:documentation xml:lang="en"> Alternative MPD event modes </xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-				<xs:enumeration value="insert"/>
-				<xs:enumeration value="replace"/>
-				<xs:enumeration value="replace+listen"/>
-				<xs:enumeration value="return"/>
-		</xs:restriction>
-    </xs:simpleType>
-    <xs:complexType name="AlternativeMPDEventType">
-        <xs:annotation>
-	        <xs:documentation xml:lang="en"> Alternative MPD event </xs:documentation>
-        </xs:annotation> 
-        <xs:sequence>
-	        <xs:any namespace="##other" 
-               processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-        <xs:attribute name="uri" type="xs:anyURI" use="required"/>
-        <xs:attribute name="mode" type="AlternativeMPDModeType" use="required"/>
-        <xs:attribute name="earliestResolutionTimeOffset" type="xs:double" use="required"/>
-        <xs:anyAttribute namespace="##other" processContents="lax"/>
-    </xs:complexType>
 	<xs:simpleType name="ContentEncodingType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en">Event Coding</xs:documentation>
@@ -338,6 +365,9 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
+
+
+
 	<xs:complexType name="ServiceDescriptionType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Service Description </xs:documentation>
@@ -355,6 +385,11 @@
 				maxOccurs="unbounded"/>
 			<xs:element name="ClientDataReporting" type="ClientDataReportingType" minOccurs="0"
 				maxOccurs="unbounded"/>
+			<xs:element name="EventRestrictions" type="EventRestrictionsType" minOccurs="0"
+				maxOccurs="unbounded"/>
+			<xs:element name="PlaybackRestrictions" type="PlaybackRestrictionsType" minOccurs="0"
+				maxOccurs="unbounded"/>
+
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute name="id" type="xs:unsignedInt"/>
@@ -404,6 +439,7 @@
 		<xs:attribute name="maxDifference" type="xs:unsignedInt"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
+
 	<xs:complexType name="OperatingBandwidthType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Service Description Operating Bandwidth
@@ -424,6 +460,28 @@
 		<xs:attribute name="target" type="xs:unsignedInt"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
+
+	<xs:complexType name="EventRestrictionsType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en"> 
+				Restrictions on event execution
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="executeOnce" type="xs:boolean" default="false"/>
+		<xs:attribute name="noJump" type="xs:boolean" default="true"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+	
+	<xs:complexType name="PlaybackRestrictionsType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en"> 
+				Playback restrictions
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="skipAfter" type="xs:float" default="0.0"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+
 	<xs:complexType name="UIntPairsWithIDType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> UInt Pairs With ID </xs:documentation>
@@ -792,13 +850,6 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:complexType name="ImportedMPDType">
-		<xs:annotation>
-			<xs:documentation xml:lang="en"> Imported MPD for linked Period </xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="uri" type="xs:string" use="required"/>
-		<xs:attribute name="earliestResolutionTimeOffset" type="xs:unsignedInt" default="60"/>
-	</xs:complexType>
 	<xs:simpleType name="AudioSamplingRateType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Audio Sampling Rate </xs:documentation>
@@ -922,7 +973,7 @@
 					<xs:element name="BitstreamSwitching" type="URLType" minOccurs="0"/>
 				</xs:sequence>
 				<xs:attribute name="duration" type="xs:unsignedInt"/>
-				<xs:attribute name="tolerence" type="xs:float" default="50.0"/>
+				<xs:attribute name="tolerance" type="xs:float" default="50.0"/>
 				<xs:attribute name="startNumber" type="xs:unsignedLong"/>
 				<xs:attribute name="endNumber" type="xs:unsignedLong"/>
 			</xs:extension>
@@ -991,32 +1042,63 @@
 		<xs:attribute name="indexRange" type="SingleRFC7233RangeType"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
+
 	<xs:complexType name="SegmentTemplateType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Segment Template </xs:documentation>
 		</xs:annotation>
+
+
 		<xs:complexContent>
 			<xs:extension base="MultipleSegmentBaseType">
+
+				<xs:sequence>
+					<xs:element name="Pattern" type="PatternType" minOccurs="0"
+						maxOccurs="unbounded"/>
+				</xs:sequence>
+
 				<xs:attribute name="media" type="xs:string"/>
 				<xs:attribute name="index" type="xs:string"/>
 				<xs:attribute name="initialization" type="xs:string"/>
 				<xs:attribute name="bitstreamSwitching" type="xs:string"/>
+				<xs:attributeGroup ref="CommonSegmentSequenceAttributes"/>
+				<xs:attributeGroup ref="CommonDurationPatternAttributes"/>
+				<xs:attributeGroup ref="CommonSegmentSequenceDurationPatternAttributes"/>
 
 			</xs:extension>
+
 		</xs:complexContent>
 	</xs:complexType>
+
+	<xs:attributeGroup name="CommonSegmentSequenceAttributes">
+		<xs:attribute name="k" type="xs:unsignedLong" default="1"/>
+		<xs:attribute name="kL" type="xs:unsignedInt"/>
+	</xs:attributeGroup>
+
+	<xs:attributeGroup name="CommonDurationPatternAttributes">
+		<xs:attribute name="p" type="xs:unsignedInt"/>
+		<xs:attribute name="pE" type="xs:unsignedInt" default="0"/>
+	</xs:attributeGroup>
+
+	<xs:attributeGroup name="CommonSegmentSequenceDurationPatternAttributes">
+		<xs:attribute name="ssp" type="xs:unsignedInt"/>
+		<xs:attribute name="sspL" type="xs:unsignedInt"/>
+	</xs:attributeGroup>
 
 	<xs:complexType name="RunLengthType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Run-length coded sequence of segments or segment
 				sequences </xs:documentation>
 		</xs:annotation>
+
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
-		<xs:attribute name="d" type="xs:unsignedLong" use="required"/>
+
+		<xs:attribute name="d" type="xs:unsignedLong"/>
 		<xs:attribute name="r" type="xs:unsignedLong" default="0"/>
-		<xs:attribute name="k" type="xs:unsignedLong" default="1"/>
+		<xs:attributeGroup ref="CommonSegmentSequenceAttributes"/>
+		<xs:attributeGroup ref="CommonDurationPatternAttributes"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -1032,21 +1114,24 @@
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
+
 	<xs:complexType name="SegmentTimelineType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Segment Timeline </xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="Pattern" type="PatternType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="S" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
+
 					<xs:attribute name="t" type="xs:unsignedLong"/>
 					<xs:attribute name="n" type="xs:unsignedLong"/>
-					<xs:attribute name="d" type="xs:unsignedLong" use="required"/>
+					<xs:attribute name="d" type="xs:unsignedLong"/>
 					<xs:attribute name="r" type="xs:integer" default="0"/>
-					<xs:attribute name="k" type="xs:unsignedLong" default="1"/>
-					<xs:attribute name="p" type="xs:unsignedLong"/>
-					<xs:attribute name="pE" type="xs:unsignedLong" default="0"/>
+
+					<xs:attributeGroup ref="CommonSegmentSequenceAttributes"/>
+					<xs:attributeGroup ref="CommonDurationPatternAttributes"/>
+					<xs:attributeGroup ref="CommonSegmentSequenceDurationPatternAttributes"/>
+
 					<xs:anyAttribute namespace="##other" processContents="lax"/>
 				</xs:complexType>
 			</xs:element>
@@ -1054,6 +1139,7 @@
 		</xs:sequence>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
+
 	<xs:simpleType name="StringVectorType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Whitespace-separated list of strings
@@ -1193,21 +1279,6 @@
 		</xs:simpleContent>
 	</xs:complexType>
 
-	<!-- ClientDataReporting -->
-	<xs:complexType name="ClientDataReportingType">
-		<xs:annotation>
-			<xs:documentation xml:lang="en"> Client Data Reporting </xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="ReportingSystem" type="DescriptorType" minOccurs="1"
-				maxOccurs="unbounded"/>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
-		<xs:attribute name="serviceLocations" type="StringVectorType"/>
-		<xs:attribute name="adaptationSets" type="UIntVectorType"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
-	</xs:complexType>
-
 	<!-- CMCDParameterType -->
 	<xs:complexType name="CMCDParameterType">
 		<xs:annotation>
@@ -1227,12 +1298,12 @@
 		</xs:attribute>
 		<xs:attribute name="includeInRequests" type="StringNoWhitespaceVectorType"
 			default="segments"/>
-		<xs:attribute name="keys" type="StringNoWhitespaceVectorType"/>
+		<xs:attribute name="keys" type="StringNoWhitespaceVectorType" use="required"/>
 		<xs:attribute name="contentID" type="StringNoWhitespaceType"/>
 		<xs:attribute name="sessionID" type="StringNoWhitespaceType"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
-	
+
 	<xs:complexType name="SupVideoInfoType">
 		<xs:annotation>
 			<xs:documentation xml:lang="en"> Picture-in-picture information </xs:documentation>
@@ -1263,5 +1334,59 @@
 		<xs:attribute name="cadence" type="xs:unsignedInt" default="0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
+
+	<xs:complexType name="ClientDataReportingType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en"> Generic Recording System descriptor </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="DescriptorType">
+				<xs:choice>
+					<!-- CMCD is one of the options. xs:any in DescriptorType is limited to other namespaces, 
+						New DASH-defined reporting systems need to be added here  
+					-->
+
+					<xs:element name="CMCDParameters" type="CMCDParameterType" minOccurs="0"
+						maxOccurs="unbounded"/>
+				</xs:choice>
+				<xs:attribute name="serviceLocations" type="StringVectorType"/>
+				<xs:attribute name="adaptationSets" type="UIntVectorType"/>
+				<xs:anyAttribute namespace="##other" processContents="lax"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AlternativeMPDEventType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en"> Alternative MPD event </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SupplementalProperty" type="DescriptorType" minOccurs="0"
+				maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uri" type="xs:anyURI" use="required"/>
+		<xs:attribute name="earliestResolutionTimeOffset" type="xs:double" default="60.0"/>
+
+		<xs:attribute name="maxDuration" type="xs:unsignedLong" default="2251799813685247"/>
+		<xs:attribute name="serviceDescriptionId" type="xs:unsignedInt"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+
+	</xs:complexType>
+
+
+	<xs:complexType name="AlternativeMPDReplaceEventType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en"> Alternative MPD Replacement Event</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="AlternativeMPDEventType">
+				<xs:attribute name="returnOffset" type="xs:unsignedLong"/>
+				<xs:attribute name="clip" type="xs:boolean" default="true"/>
+				<xs:attribute name="startAtPlayhead" type="xs:boolean" default="false"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 
 </xs:schema>
