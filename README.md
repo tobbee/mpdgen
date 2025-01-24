@@ -3,6 +3,10 @@
 In this repo, Go code to represent DASH-MPD is first auto-generated, and
 then modified so that it can be used in an efficient way.
 
+The latest version is 6'th edition draft from January 2025.
+
+Before that, there was 5'th edition Amd. 1
+
 The XML Schema for MPEG DASH MPD is the 5'th edition fetched from the [DASHSchema repo](https://github.com/MPEGGroup/DASHSchema)
 as commit `993cb92`.
 
