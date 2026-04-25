@@ -24,6 +24,7 @@ type MPDtype struct {
 	BaseURL                    []*BaseURLType             `xml:"BaseURL"`
 	Location                   []*LocationType            `xml:"Location"`
 	PatchLocation              []*PatchLocationType       `xml:"PatchLocation"`
+	RequestParam               []*ExtendedUrlInfoType     `xml:"RequestParam"`
 	ServiceDescription         []*ServiceDescriptionType  `xml:"ServiceDescription"`
 	InitializationSet          []*InitializationSetType   `xml:"InitializationSet"`
 	InitializationGroup        []*UIntVWithIDType         `xml:"InitializationGroup"`
@@ -35,6 +36,7 @@ type MPDtype struct {
 	SupplementalProperty       []*DescriptorType          `xml:"SupplementalProperty"`
 	UTCTiming                  []*DescriptorType          `xml:"UTCTiming"`
 	LeapSecondInformation      *LeapSecondInformationType `xml:"LeapSecondInformation"`
+	ContentSteering            *ContentSteeringType       `xml:"ContentSteering"`
 }
 
 // PatchLocationType is Patch Location Type
@@ -55,16 +57,18 @@ type PresentationType string
 
 // PeriodType is Period
 type PeriodType struct {
-	XlinkHref            *Href                     `xml:"xlink:href,attr,omitempty"`
-	XlinkActuate         *Actuate                  `xml:"xlink:actuate,attr,omitempty"`
-	XlinkType            *Type                     `xml:"xlink:type,attr,omitempty"`
-	XlinkShow            *Show                     `xml:"xlink:show,attr,omitempty"`
+	XlinkHref            string                    `xml:"xlink:href,attr,omitempty"`
+	XlinkActuate         string                    `xml:"xlink:actuate,attr,omitempty"`
+	XlinkType            string                    `xml:"xlink:type,attr,omitempty"`
+	XlinkShow            string                    `xml:"xlink:show,attr,omitempty"`
 	Id                   string                    `xml:"id,attr,omitempty"`
 	Start                string                    `xml:"start,attr,omitempty"`
 	Duration             string                    `xml:"duration,attr,omitempty"`
 	BitstreamSwitching   bool                      `xml:"bitstreamSwitching,attr,omitempty"`
+	MinBufferTime        string                    `xml:"minBufferTime,attr,omitempty"`
 	ImportedMPD          *ImportedMpdType          `xml:"ImportedMPD"`
 	BaseURL              []*BaseURLType            `xml:"BaseURL"`
+	RequestParam         []*ExtendedUrlInfoType    `xml:"RequestParam"`
 	SegmentBase          *SegmentBaseType          `xml:"SegmentBase"`
 	SegmentList          *SegmentListType          `xml:"SegmentList"`
 	SegmentTemplate      *SegmentTemplateType      `xml:"SegmentTemplate"`
@@ -80,26 +84,27 @@ type PeriodType struct {
 	Preselection         []*PreselectionType       `xml:"Preselection"`
 }
 
-// ImportedMpdType is Imported MPD
+// ImportedMpdType ...
 type ImportedMpdType struct {
-	Uri                          string  `xml:"uri,attr"`
 	EarliestResolutionTimeOffset float64 `xml:"earliestResolutionTimeOffset,attr,omitempty"`
+	Value                        string  `xml:",chardata"`
 }
 
 // EventStreamType is Event Stream
 type EventStreamType struct {
-	XlinkHref              *Href                     `xml:"xlink:href,attr,omitempty"`
-	XlinkActuate           *Actuate                  `xml:"xlink:actuate,attr,omitempty"`
-	XlinkType              *Type                     `xml:"xlink:type,attr,omitempty"`
-	XlinkShow              *Show                     `xml:"xlink:show,attr,omitempty"`
-	SchemeIdUri            string                    `xml:"schemeIdUri,attr"`
-	Value                  string                    `xml:"value,attr,omitempty"`
-	Timescale              uint32                    `xml:"timescale,attr,omitempty"`
-	PresentationTimeOffset uint64                    `xml:"presentationTimeOffset,attr,omitempty"`
-	Event                  []*EventType              `xml:"Event"`
-	ServiceDescription     []*ServiceDescriptionType `xml:"ServiceDescription"`
-	EssentialProperty      []*DescriptorType         `xml:"EssentialProperty"`
-	SupplementalProperty   []*DescriptorType         `xml:"SupplementalProperty"`
+	XlinkHref              string                 `xml:"xlink:href,attr,omitempty"`
+	XlinkActuate           string                 `xml:"xlink:actuate,attr,omitempty"`
+	XlinkType              string                 `xml:"xlink:type,attr,omitempty"`
+	XlinkShow              string                 `xml:"xlink:show,attr,omitempty"`
+	SchemeIdUri            string                 `xml:"schemeIdUri,attr"`
+	Value                  string                 `xml:"value,attr,omitempty"`
+	Timescale              uint32                 `xml:"timescale,attr,omitempty"`
+	PresentationTimeOffset uint64                 `xml:"presentationTimeOffset,attr,omitempty"`
+	Event                  []*EventType           `xml:"Event"`
+	BaseURL                []*BaseURLType         `xml:"BaseURL"`
+	RequestParam           []*ExtendedUrlInfoType `xml:"RequestParam"`
+	EssentialProperty      []*DescriptorType      `xml:"EssentialProperty"`
+	SupplementalProperty   []*DescriptorType      `xml:"SupplementalProperty"`
 }
 
 // EventType is Event
@@ -140,9 +145,9 @@ type ContentEncodingType string
 
 // InitializationSetType is Initialization Set
 type InitializationSetType struct {
-	XlinkHref      *Href             `xml:"xlink:href,attr,omitempty"`
-	XlinkActuate   *Actuate          `xml:"xlink:actuate,attr,omitempty"`
-	XlinkType      *Type             `xml:"xlink:type,attr,omitempty"`
+	XlinkHref      string            `xml:"xlink:href,attr,omitempty"`
+	XlinkActuate   string            `xml:"xlink:actuate,attr,omitempty"`
+	XlinkType      string            `xml:"xlink:type,attr,omitempty"`
 	Id             uint32            `xml:"id,attr"`
 	InAllPeriods   bool              `xml:"inAllPeriods,attr,omitempty"`
 	ContentType    string            `xml:"contentType,attr,omitempty"`
@@ -160,7 +165,7 @@ type InitializationSetType struct {
 
 // ServiceDescriptionType is Service Description
 type ServiceDescriptionType struct {
-	Id                   uint32                      `xml:"id,attr,omitempty"`
+	Id                   uint32                      `xml:"id,attr"`
 	Scope                []*DescriptorType           `xml:"Scope"`
 	Latency              []*LatencyType              `xml:"Latency"`
 	PlaybackRate         []*PlaybackRateType         `xml:"PlaybackRate"`
@@ -168,7 +173,6 @@ type ServiceDescriptionType struct {
 	OperatingBandwidth   []*OperatingBandwidthType   `xml:"OperatingBandwidth"`
 	ContentSteering      []*ContentSteeringType      `xml:"ContentSteering"`
 	ClientDataReporting  []*ClientDataReportingType  `xml:"ClientDataReporting"`
-	EventRestrictions    []*EventRestrictionsType    `xml:"EventRestrictions"`
 	PlaybackRestrictions []*PlaybackRestrictionsType `xml:"PlaybackRestrictions"`
 }
 
@@ -205,15 +209,9 @@ type OperatingBandwidthType struct {
 	Target    uint32 `xml:"target,attr,omitempty"`
 }
 
-// EventRestrictionsType is Restrictions on event execution
-type EventRestrictionsType struct {
-	ExecuteOnce bool `xml:"executeOnce,attr,omitempty"`
-	NoJump      bool `xml:"noJump,attr,omitempty"`
-}
-
 // PlaybackRestrictionsType is Playback restrictions
 type PlaybackRestrictionsType struct {
-	SkipAfter float32 `xml:"skipAfter,attr,omitempty"`
+	SkipAfter string `xml:"skipAfter,attr,omitempty"`
 }
 
 // UIntPairsWithIDType is UInt Pairs With ID
@@ -235,10 +233,10 @@ type ListOfProfilesType string
 
 // AdaptationSetType is Adaptation Set
 type AdaptationSetType struct {
-	XlinkHref               *Href                   `xml:"xlink:href,attr,omitempty"`
-	XlinkActuate            *Actuate                `xml:"xlink:actuate,attr,omitempty"`
-	XlinkType               *Type                   `xml:"xlink:type,attr,omitempty"`
-	XlinkShow               *Show                   `xml:"xlink:show,attr,omitempty"`
+	XlinkHref               string                  `xml:"xlink:href,attr,omitempty"`
+	XlinkActuate            string                  `xml:"xlink:actuate,attr,omitempty"`
+	XlinkType               string                  `xml:"xlink:type,attr,omitempty"`
+	XlinkShow               string                  `xml:"xlink:show,attr,omitempty"`
 	Id                      uint32                  `xml:"id,attr,omitempty"`
 	Group                   uint32                  `xml:"group,attr,omitempty"`
 	Lang                    string                  `xml:"lang,attr,omitempty"`
@@ -264,6 +262,7 @@ type AdaptationSetType struct {
 	Viewpoint               []*DescriptorType       `xml:"Viewpoint"`
 	ContentComponent        []*ContentComponentType `xml:"ContentComponent"`
 	BaseURL                 []*BaseURLType          `xml:"BaseURL"`
+	RequestParam            []*ExtendedUrlInfoType  `xml:"RequestParam"`
 	SegmentBase             *SegmentBaseType        `xml:"SegmentBase"`
 	SegmentList             *SegmentListType        `xml:"SegmentList"`
 	SegmentTemplate         *SegmentTemplateType    `xml:"SegmentTemplate"`
@@ -305,6 +304,7 @@ type RepresentationType struct {
 	BaseURL                []*BaseURLType           `xml:"BaseURL"`
 	ExtendedBandwidth      []*ExtendedBandwidthType `xml:"ExtendedBandwidth"`
 	SubRepresentation      []*SubRepresentationType `xml:"SubRepresentation"`
+	RequestParam           []*ExtendedUrlInfoType   `xml:"RequestParam"`
 	SegmentBase            *SegmentBaseType         `xml:"SegmentBase"`
 	SegmentList            *SegmentListType         `xml:"SegmentList"`
 	SegmentTemplate        *SegmentTemplateType     `xml:"SegmentTemplate"`
@@ -337,38 +337,38 @@ type SubRepresentationType struct {
 
 // RepresentationBaseType is Representation base (common attributes and elements)
 type RepresentationBaseType struct {
-	Profiles                  string                         `xml:"profiles,attr,omitempty"`
-	Width                     uint32                         `xml:"width,attr,omitempty"`
-	Height                    uint32                         `xml:"height,attr,omitempty"`
-	Sar                       string                         `xml:"sar,attr,omitempty"`
-	FrameRate                 string                         `xml:"frameRate,attr,omitempty"`
-	AudioSamplingRate         *UIntVectorType                `xml:"audioSamplingRate,attr,omitempty"`
-	MimeType                  string                         `xml:"mimeType,attr,omitempty"`
-	SegmentProfiles           *ListOf4CCType                 `xml:"segmentProfiles,attr,omitempty"`
-	Codecs                    string                         `xml:"codecs,attr,omitempty"`
-	ContainerProfiles         *ListOf4CCType                 `xml:"containerProfiles,attr,omitempty"`
-	MaximumSAPPeriod          float64                        `xml:"maximumSAPPeriod,attr,omitempty"`
-	StartWithSAP              uint32                         `xml:"startWithSAP,attr,omitempty"`
-	MaxPlayoutRate            float64                        `xml:"maxPlayoutRate,attr,omitempty"`
-	CodingDependency          bool                           `xml:"codingDependency,attr,omitempty"`
-	ScanType                  string                         `xml:"scanType,attr,omitempty"`
-	SelectionPriority         uint32                         `xml:"selectionPriority,attr,omitempty"`
-	Tag                       string                         `xml:"tag,attr,omitempty"`
-	FramePacking              []*DescriptorType              `xml:"FramePacking"`
-	AudioChannelConfiguration []*DescriptorType              `xml:"AudioChannelConfiguration"`
-	ContentProtection         []*ContentProtectionType       `xml:"ContentProtection"`
-	OutputProtection          *DescriptorType                `xml:"OutputProtection"`
-	EssentialProperty         []*DescriptorType              `xml:"EssentialProperty"`
-	SupplementalProperty      []*DescriptorType              `xml:"SupplementalProperty"`
-	InbandEventStream         []*EventStreamType             `xml:"InbandEventStream"`
-	Switching                 []*SwitchingType               `xml:"Switching"`
-	RandomAccess              []*RandomAccessType            `xml:"RandomAccess"`
-	GroupLabel                []*LabelType                   `xml:"GroupLabel"`
-	Label                     []*LabelType                   `xml:"Label"`
-	ProducerReferenceTime     []*ProducerReferenceTimeType   `xml:"ProducerReferenceTime"`
-	ContentPopularityRate     []*ContentPopularityRateType   `xml:"ContentPopularityRate"`
-	Resync                    []*ResyncType                  `xml:"Resync"`
-	SegmentSequenceProperties *SegmentSequencePropertiesType `xml:"SegmentSequenceProperties"`
+	Profiles                  string                           `xml:"profiles,attr,omitempty"`
+	Width                     uint32                           `xml:"width,attr,omitempty"`
+	Height                    uint32                           `xml:"height,attr,omitempty"`
+	Sar                       string                           `xml:"sar,attr,omitempty"`
+	FrameRate                 string                           `xml:"frameRate,attr,omitempty"`
+	AudioSamplingRate         *UIntVectorType                  `xml:"audioSamplingRate,attr,omitempty"`
+	MimeType                  string                           `xml:"mimeType,attr,omitempty"`
+	SegmentProfiles           *ListOf4CCType                   `xml:"segmentProfiles,attr,omitempty"`
+	Codecs                    string                           `xml:"codecs,attr,omitempty"`
+	ContainerProfiles         *ListOf4CCType                   `xml:"containerProfiles,attr,omitempty"`
+	MaximumSAPPeriod          float64                          `xml:"maximumSAPPeriod,attr,omitempty"`
+	StartWithSAP              uint32                           `xml:"startWithSAP,attr,omitempty"`
+	MaxPlayoutRate            float64                          `xml:"maxPlayoutRate,attr,omitempty"`
+	CodingDependency          bool                             `xml:"codingDependency,attr,omitempty"`
+	ScanType                  string                           `xml:"scanType,attr,omitempty"`
+	SelectionPriority         uint32                           `xml:"selectionPriority,attr,omitempty"`
+	Tag                       string                           `xml:"tag,attr,omitempty"`
+	FramePacking              []*DescriptorType                `xml:"FramePacking"`
+	AudioChannelConfiguration []*DescriptorType                `xml:"AudioChannelConfiguration"`
+	ContentProtection         []*ContentProtectionType         `xml:"ContentProtection"`
+	OutputProtection          *DescriptorType                  `xml:"OutputProtection"`
+	EssentialProperty         []*DescriptorType                `xml:"EssentialProperty"`
+	SupplementalProperty      []*DescriptorType                `xml:"SupplementalProperty"`
+	InbandEventStream         []*EventStreamType               `xml:"InbandEventStream"`
+	Switching                 []*SwitchingType                 `xml:"Switching"`
+	RandomAccess              []*RandomAccessType              `xml:"RandomAccess"`
+	GroupLabel                []*LabelType                     `xml:"GroupLabel"`
+	Label                     []*LabelType                     `xml:"Label"`
+	ProducerReferenceTime     []*ProducerReferenceTimeType     `xml:"ProducerReferenceTime"`
+	ContentPopularityRate     []*ContentPopularityRateType     `xml:"ContentPopularityRate"`
+	Resync                    []*ResyncType                    `xml:"Resync"`
+	SegmentSequenceProperties []*SegmentSequencePropertiesType `xml:"SegmentSequenceProperties"`
 }
 
 // ContentProtectionType is Content Protection
@@ -500,6 +500,8 @@ type MultipleSegmentBaseType struct {
 	Tolerance          float32              `xml:"tolerance,attr,omitempty"`
 	StartNumber        uint64               `xml:"startNumber,attr,omitempty"`
 	EndNumber          uint64               `xml:"endNumber,attr,omitempty"`
+	EndSubNumber       uint64               `xml:"endSubNumber,attr,omitempty"`
+	K                  uint64               `xml:"k,attr,omitempty"`
 	SegmentTimeline    *SegmentTimelineType `xml:"SegmentTimeline"`
 	BitstreamSwitching *URLType             `xml:"BitstreamSwitching"`
 	*SegmentBaseType
@@ -528,10 +530,10 @@ type FailoverContentType struct {
 
 // SegmentListType is Segment List
 type SegmentListType struct {
-	XlinkHref    *Href             `xml:"xlink:href,attr,omitempty"`
-	XlinkActuate *Actuate          `xml:"xlink:actuate,attr,omitempty"`
-	XlinkType    *Type             `xml:"xlink:type,attr,omitempty"`
-	XlinkShow    *Show             `xml:"xlink:show,attr,omitempty"`
+	XlinkHref    string            `xml:"xlink:href,attr,omitempty"`
+	XlinkActuate string            `xml:"xlink:actuate,attr,omitempty"`
+	XlinkType    string            `xml:"xlink:type,attr,omitempty"`
+	XlinkShow    string            `xml:"xlink:show,attr,omitempty"`
 	SegmentURL   []*SegmentURLType `xml:"SegmentURL"`
 	*MultipleSegmentBaseType
 }
@@ -546,42 +548,19 @@ type SegmentURLType struct {
 
 // SegmentTemplateType is Segment Template
 type SegmentTemplateType struct {
-	CommonSegmentSequenceAttributes                *CommonSegmentSequenceAttributes
-	CommonDurationPatternAttributes                *CommonDurationPatternAttributes
-	CommonSegmentSequenceDurationPatternAttributes *CommonSegmentSequenceDurationPatternAttributes
-	Media                                          string         `xml:"media,attr,omitempty"`
-	Index                                          string         `xml:"index,attr,omitempty"`
-	Initialization                                 string         `xml:"initialization,attr,omitempty"`
-	BitstreamSwitching                             string         `xml:"bitstreamSwitching,attr,omitempty"`
-	Pattern                                        []*PatternType `xml:"Pattern"`
+	Media              string `xml:"media,attr,omitempty"`
+	Index              string `xml:"index,attr,omitempty"`
+	Initialization     string `xml:"initialization,attr,omitempty"`
+	BitstreamSwitching string `xml:"bitstreamSwitching,attr,omitempty"`
 	*MultipleSegmentBaseType
 }
 
-// CommonSegmentSequenceAttributes ...
-type CommonSegmentSequenceAttributes struct {
-	K  uint64 `xml:"k,attr,omitempty"`
-	KL uint32 `xml:"kL,attr,omitempty"`
-}
-
-// CommonDurationPatternAttributes ...
-type CommonDurationPatternAttributes struct {
-	P  uint32 `xml:"p,attr,omitempty"`
-	PE uint32 `xml:"pE,attr,omitempty"`
-}
-
-// CommonSegmentSequenceDurationPatternAttributes ...
-type CommonSegmentSequenceDurationPatternAttributes struct {
-	Ssp  uint32 `xml:"ssp,attr,omitempty"`
-	SspL uint32 `xml:"sspL,attr,omitempty"`
-}
-
-// RunLengthType is Run-length coded sequence of segments or segment
-// sequences
+// RunLengthType is Run-length coded sequence of segments or segment sequences
 type RunLengthType struct {
-	CommonSegmentSequenceAttributes *CommonSegmentSequenceAttributes
-	CommonDurationPatternAttributes *CommonDurationPatternAttributes
-	D                               uint64 `xml:"d,attr,omitempty"`
-	R                               uint64 `xml:"r,attr,omitempty"`
+	D   uint64 `xml:"d,attr,omitempty"`
+	R   uint32 `xml:"r,attr,omitempty"`
+	K   uint32 `xml:"k,attr,omitempty"`
+	Ssp uint32 `xml:"ssp,attr,omitempty"`
 }
 
 // PatternType is Duration pattern
@@ -592,18 +571,20 @@ type PatternType struct {
 
 // S ...
 type S struct {
-	CommonSegmentSequenceAttributes                *CommonSegmentSequenceAttributes
-	CommonDurationPatternAttributes                *CommonDurationPatternAttributes
-	CommonSegmentSequenceDurationPatternAttributes *CommonSegmentSequenceDurationPatternAttributes
-	T                                              uint64 `xml:"t,attr,omitempty"`
-	N                                              uint64 `xml:"n,attr,omitempty"`
-	D                                              uint64 `xml:"d,attr,omitempty"`
-	R                                              int    `xml:"r,attr,omitempty"`
+	T   uint64 `xml:"t,attr,omitempty"`
+	N   uint64 `xml:"n,attr,omitempty"`
+	D   uint64 `xml:"d,attr,omitempty"`
+	R   int    `xml:"r,attr,omitempty"`
+	K   uint32 `xml:"k,attr,omitempty"`
+	P   uint32 `xml:"p,attr,omitempty"`
+	PE  uint32 `xml:"pE,attr,omitempty"`
+	Ssp uint32 `xml:"ssp,attr,omitempty"`
 }
 
 // SegmentTimelineType is Segment Timeline
 type SegmentTimelineType struct {
-	S []*S `xml:"S"`
+	Pattern []*PatternType `xml:"Pattern"`
+	S       []*S           `xml:"S"`
 }
 
 // StringVectorType is Whitespace-separated list of strings
@@ -658,8 +639,7 @@ type RangeType struct {
 	Duration  string `xml:"duration,attr,omitempty"`
 }
 
-// CodecsType is RFC6381 simp-list without enclosing double
-// quotes
+// CodecsType is RFC6381 simp-list without enclosing double quotes
 type CodecsType string
 
 // LeapSecondInformationType is Leap Second Information
@@ -697,13 +677,10 @@ type SupVideoInfoType struct {
 
 // SegmentSequencePropertiesType is Segment Sequence properties
 type SegmentSequencePropertiesType struct {
-	SAP []*SapWithCadenceType `xml:"SAP"`
-}
-
-// SapWithCadenceType is Segment Sequence SAP properties
-type SapWithCadenceType struct {
-	Type    uint32 `xml:"type,attr"`
-	Cadence uint32 `xml:"cadence,attr,omitempty"`
+	SapType   uint32 `xml:"sapType,attr,omitempty"`
+	Cadence   uint32 `xml:"cadence,attr,omitempty"`
+	Event     bool   `xml:"event,attr,omitempty"`
+	Alignment string `xml:"alignment,attr,omitempty"`
 }
 
 // ClientDataReportingType is Generic Recording System descriptor
@@ -719,7 +696,9 @@ type AlternativeMPDEventType struct {
 	Uri                          string            `xml:"uri,attr"`
 	EarliestResolutionTimeOffset float64           `xml:"earliestResolutionTimeOffset,attr,omitempty"`
 	MaxDuration                  uint64            `xml:"maxDuration,attr,omitempty"`
-	ServiceDescriptionId         uint32            `xml:"serviceDescriptionId,attr,omitempty"`
+	ExecuteOnce                  bool              `xml:"executeOnce,attr,omitempty"`
+	NoJump                       int               `xml:"noJump,attr,omitempty"`
+	SkipAfter                    string            `xml:"skipAfter,attr,omitempty"`
 	SupplementalProperty         []*DescriptorType `xml:"SupplementalProperty"`
 }
 
@@ -727,6 +706,6 @@ type AlternativeMPDEventType struct {
 type AlternativeMPDReplaceEventType struct {
 	ReturnOffset    uint64 `xml:"returnOffset,attr,omitempty"`
 	Clip            bool   `xml:"clip,attr,omitempty"`
-	StartAtPlayhead bool   `xml:"startAtPlayhead,attr,omitempty"`
+	StartWithOffset bool   `xml:"startWithOffset,attr,omitempty"`
 	*AlternativeMPDEventType
 }
